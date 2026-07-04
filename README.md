@@ -20,7 +20,7 @@ This project introduces a **Dynamic Manchester Triage System**. It uses a **Baye
 
 The chart below shows the **Total Accumulated Risk** across the different strategies. A lower index means less patient suffering and a safer waiting room environment.
 
-![Strategy Comparison Chart](image_a150a9.png)
+![Strategy Comparison Chart](graphs_comps.png)
 
 ### Key Insights from the Data:
 *   **Small Scale (5 Patients):** Even with few patients, A\* achieves the safest schedule with a total risk score of **8.93**, outperforming both FIFO (11.58) and Greedy Search (11.28).
