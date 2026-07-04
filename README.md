@@ -109,5 +109,5 @@ The chart below summarizes the **Total Accumulated Risk** across the different s
 
 ---
 
-## 📜 License
+##  License
 This project is licensed under the MIT License - see the LICENSE file for details.
