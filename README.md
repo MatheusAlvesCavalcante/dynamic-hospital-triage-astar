@@ -16,19 +16,6 @@ This project introduces a **Dynamic Manchester Triage System**. It uses a **Baye
 
 ---
 
-##  Benchmark Results
-
-The chart below shows the **Total Accumulated Risk** across the different strategies. A lower index means less patient suffering and a safer waiting room environment.
-
-![Strategy Comparison Chart](graphs_comps.png)
-
-### Key Insights from the Data:
-*   **Small Scale (5 Patients):** Even with few patients, A\* achieves the safest schedule with a total risk score of **8.93**, outperforming both FIFO (11.58) and Greedy Search (11.28).
-*   **Large Scale (20 Patients):** In a crowded ER scenario, the traditional FIFO baseline scales dangerously up to a massive risk index of **1273.91**. 
-*   **The AI Advantage:** The **A\* algorithm cuts the total risk by more than half** compared to FIFO, dropping it down to **610.33**. It also drastically outperforms the Greedy Search (917.22), proving that anticipating exponential timeline deterioration is mathematically safer than just treating the most severe current case.
-
----
-
 ##  How It Works
 
 The architecture relies on three core AI and data structure components to process each patient's parameters (**Fever**, **Oxygen Saturation**, **Blood Pressure**, and **Initial Wait Time**):
@@ -73,3 +60,54 @@ Make sure you have Python 3.8+ installed along with the required scientific comp
 
 ```bash
 pip install numpy pgmpy
+python main.py
+```
+
+##  Deep Dive: 20-Patient Scenario Logs
+
+To understand why the strategies perform so differently, we analyzed the console execution logs for each algorithm in the 20-patient scenario.
+
+### 1. FIFO Baseline (Strictly Chronological)
+<p align="center">
+  <img src="assets/result_fifo_queue_algorithm.png" alt="FIFO Log" width="750">
+</p>
+
+*   **The Log Behavior:** Patients are called based strictly on their initial waiting room time. **Bianca** (90 min wait, 23.24% severity) is called 1st, while highly critical patients like **Renato**, **Paula**, and **Lucas** (all at 92.59% severity) are left waiting at the very bottom (18th, 19th, and 20th places).
+*   **The Consequence:** Leaving high-severity patients waiting for an extra 180 to 200 minutes while the queue clears causes their exponential risk curves to skyrocket, culminating in a disastrous total risk index of **1273.9096**.
+
+### 2. Greedy Search (Myopic Severity)
+<p align="center">
+  <img src="assets/result_algorithm_greedy_search_.png" alt="Greedy Search Log" width="750">
+</p>
+
+*   **The Log Behavior:** The algorithm pushes the highest risk directly to the top. **Renato**, **Paula**, and **Lucas** (92.59% severity) are successfully salvaged in the 1st, 2nd, and 3rd slots.
+*   **The Consequence:** Because it is blind to time, it ignores moderate patients who have been sitting in the ER for over an hour. For instance, **Bianca** (90 min initial wait) is pushed all the way down to 16th place. By the time the algorithm finally gets to her, her risk has grown exponentially, dragging the total strategic risk to a high score of **917.2239**.
+
+### 3. A* Search with Beam Search (Optimized Balance)
+<p align="center">
+  <img src="assets/result_astar_algorithm.png" alt="A* Log" width="750">
+</p>
+
+*   **The Log Behavior:** This is where the mathematical balancing shines. Instead of blindly picking the longest wait or the highest current severity, A\* schedules **João** (65.66% severity, 60 min wait) and **Patrícia** (65.66% severity, 55 min wait) in 1st and 2nd place. 
+*   **Why this works:** A\* realizes that their combined clinical risk and high wait times make them an explosive combination if left untreated. It safely delays the ultra-severe but fresh cases like **Paula** (5 min wait) and **Lucas** (0 min wait) down to 8th and 9th place, because their low elapsed time means their exponential curves haven't started spiking yet.
+*   **The Outcome:** By dynamically managing the timeline, it saves both ends of the risk spectrum, achieving the absolute lowest total risk index of **610.3287**.
+
+---
+
+##  Benchmark Results
+
+The chart below summarizes the **Total Accumulated Risk** across the different strategies. A lower index means less patient suffering and a safer waiting room environment.
+
+<p align="center">
+  <img src="assets/graphs_comps.png" alt="Strategy Comparison Chart" width="800">
+</p>
+
+### Key Insights from the Data:
+*   **Small Scale (5 Patients):** Even with few patients, A\* achieves the safest schedule with a total risk score of **8.93**, outperforming both FIFO (11.58) and Greedy Search (11.28).
+*   **Large Scale (20 Patients):** In a crowded ER scenario, the traditional FIFO baseline scales dangerously up to a massive risk index of **1273.91**. 
+*   **The AI Advantage:** The **A\* algorithm cuts the total risk by more than half** compared to FIFO, dropping it down to **610.33**. It also drastically outperforms the Greedy Search (917.22), proving that anticipating exponential timeline deterioration is mathematically safer than just treating the most severe current case.
+
+---
+
+## 📜 License
+This project is licensed under the MIT License - see the LICENSE file for details.
